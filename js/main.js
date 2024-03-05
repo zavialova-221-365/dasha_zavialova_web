@@ -430,4 +430,19 @@ let selectedRoute = '';
             return 1; // Множитель для буднего дня
         }
     }
+    // Функция для определения надбавки за утро
+    function calculateIsItMorning(time) {
+        const startTime = new Date(`01/01/2000 ${time}`); // Преобразуем время начала экскурсии в объект Date
+
+        // Предположим, что утро - с 9 до 12 часов
+        const morningStartTime = new Date(`01/01/2000 09:00`);
+        const morningEndTime = new Date(`01/01/2000 12:00`);
+
+        // Если время начала экскурсии находится в интервале утра, возвращаем надбавку, иначе возвращаем 0
+        if (startTime >= morningStartTime && startTime <= morningEndTime) {
+            return 400; // Надбавка за утро
+        } else {
+            return 0; // Надбавка за утро не начинается до 9 часов
+        }
+    }
 });
