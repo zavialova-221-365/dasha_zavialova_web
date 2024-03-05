@@ -420,5 +420,14 @@ let selectedRoute = '';
 
         return totalPrice;
     }
+    function calculateIsThisDayOff(date) {
+        const dayOfWeek = date.getDay(); // Получаем день недели (0 - воскресенье, 1 - понедельник, и т.д.)
 
+        // Предположим, что праздничными будут суббота (6) и воскресенье (0)
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+            return 1.5; // Множитель для праздничных дней
+        } else {
+            return 1; // Множитель для буднего дня
+        }
+    }
 });
