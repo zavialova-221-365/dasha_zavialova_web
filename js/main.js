@@ -407,5 +407,18 @@ let selectedRoute = '';
                 });
         });
     });
+    function calculatePrice(guideServiceCost, hoursNumber, isThisDayOff, isItMorning, isItEvening, numberOfVisitors) {
+        let totalPrice = guideServiceCost * hoursNumber * isThisDayOff + isItMorning + isItEvening;
+
+        if (numberOfVisitors > 0 && numberOfVisitors <= 5) {
+            totalPrice += 0; // Надбавка за количество посетителей: от 1 до 5 человек – 0 рублей
+        } else if (numberOfVisitors > 5 && numberOfVisitors <= 10) {
+            totalPrice += 1000; // Надбавка за количество посетителей: от 5 до 10 – 1000 рублей
+        } else if (numberOfVisitors > 10 && numberOfVisitors <= 20) {
+            totalPrice += 1500; // Надбавка за количество посетителей: от 10 до 20 – 1500 рублей
+        }
+
+        return totalPrice;
+    }
 
 });
