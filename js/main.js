@@ -306,5 +306,106 @@ let selectedRoute = '';
                 console.error('Ошибка при получении данных о гидах:', error);
             });
     });
+    document.getElementById('calculateCost').addEventListener('click', function () {
+        const hoursNumber = parseInt(document.getElementById('duration').value);
+        console.log(hoursNumber)
+        // Получаем дату экскурсии и время начала экскурсии из модального окна
+        const tourDate = new Date(document.getElementById('tourDate').value);
+        console.log(tourDate)
+        const startTime = document.getElementById('startTime').value;
+        console.log(startTime)
+        // Рассчитываем множитель для праздничных дней, надбавку за утро и вечер
+        const isThisDayOff = calculateIsThisDayOff(tourDate);
+        console.log(isThisDayOff)
+
+        const isItMorning = calculateIsItMorning(startTime);
+        console.log(isItMorning)
+
+        const isItEvening = calculateIsItEvening(startTime);
+        console.log(isItEvening)
+
+        let guidePricePerHour = parseFloat(document.querySelector('.btn.selectedG').getAttribute('data-price-per-hour'));
+        console.log(guidePricePerHour)
+        if (isNaN(guidePricePerHour)) {
+            guidePricePerHour = 1400;
+        }
+        const numberOfVisitors = parseInt(document.getElementById('groupSize').value);
+        console.log(numberOfVisitors)
+        const guideId = parseFloat(document.querySelector('.btn.selectedG').getAttribute('data-guide-id'));
+        const routeId = parseFloat(document.querySelector('.btn.selectedG').getAttribute('data-route-id'));
+
+
+        const useSeniorDiscount = document.getElementById('option1').checked;
+        const useInterpreterSupport = document.getElementById('option2').checked;
+
+        let seniorDiscountMultiplier = 1;
+        let interpreterSupportMultiplier = 1;
+
+        if (useSeniorDiscount) {
+            seniorDiscountMultiplier = 0.75; // Скидка для пенсионеров: 25%
+        }
+
+        if (useInterpreterSupport) {
+            const visitorsCount = parseInt(document.getElementById('groupSize').value);
+            if (visitorsCount >= 1 && visitorsCount <= 5) {
+                interpreterSupportMultiplier = 1.15; // Увеличение на 15% для 1-5 посетителей
+            } else if (visitorsCount > 5 && visitorsCount <= 10) {
+                interpreterSupportMultiplier = 1.25; // Увеличение на 25% для 6-10 посетителей
+            } else {
+                // Если больше 10 посетителей, блокируем опцию
+                useInterpreterSupport = false; // Отключаем опцию, если посетителей больше 10
+                document.getElementById('interpreterSupport').checked = false;
+            }
+        }
+        const totalPrice = calculatePrice(
+            guidePricePerHour * seniorDiscountMultiplier * interpreterSupportMultiplier,
+            hoursNumber,
+            isThisDayOff,
+            isItMorning,
+            isItEvening,
+            numberOfVisitors
+        );
+
+
+        document.getElementById('totalCost').value = totalPrice.toFixed(2);
+        const requestBody = {
+            guide_id: 2, // Пример значения
+            route_id: 20, // Пример значения
+            date: '2024-01-15', // Пример значения в формате YYYY-MM-DD
+            time: '14:30', // Пример значения в формате HH:MM
+            duration: 2, // Пример значения от 1 до 3
+            persons: 10, // Пример значения от 1 до 20
+            price: 1500, // Пример значения
+            optionFirst: 1, // Пример значения, передаваемого как 0 или 1 (ноль или единица)
+            optionSecond: 0, // Пример значения, передаваемого как 0 или 1 (ноль или единица)
+            student_id: 789 // Пример значения
+            // Добавьте другие значения, если необходимо
+        };
+
+
+        document.getElementById('sendOrder').addEventListener('click', function () {
+            fetch('http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/orders?api_key=94e79ed5-a807-4062-8af2-f303b21cc53b', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('Заявка успешно создана. Проверьте в личном кабинете.');
+                    // Обработайте данные, если необходимо
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    // Оповестите пользователя об ошибке, если необходимо
+                });
+        });
+    });
 
 });
