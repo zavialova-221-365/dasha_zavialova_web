@@ -246,4 +246,65 @@ let selectedRoute = '';
                 console.error('Ошибка при получении данных о гидах:', error);
             });
     }
+    document.getElementById('filterGuides').addEventListener('click', function () {
+        const selectedLanguage = document.getElementById('selectLanguages').value;
+        const minExperience = parseInt(document.getElementById('minExperience').value) || 0;
+        const maxExperience = parseInt(document.getElementById('maxExperience').value) || Infinity;
+
+        const guidesTableBody = document.getElementById('guidesTableBody');
+        const routeButton = document.querySelector('.databutton');
+        const routeId = parseInt(routeButton.getAttribute('data-route-id'));
+        // Продолжайте выполнение кода, используя полученный routeId
+
+        guidesTableBody.innerHTML = ''; // Очищаем предыдущие результаты
+
+
+        const apiUrl = `http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes/${routeId}/guides?api_key=3990d76f-4908-438c-a2e9-90a0a642eb96`;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Фильтрация гидов по выбранному языку и опыту работы
+                const filteredGuides = data.filter(guide => {
+                    return (!selectedLanguage || guide.language === selectedLanguage) &&
+                        (guide.workExperience >= minExperience && guide.workExperience <= maxExperience);
+                });
+
+                // Отображение отфильтрованных результатов в таблице
+                filteredGuides.forEach(guide => {
+                    const row = document.createElement('tr');
+                    const nameCell = document.createElement('td');
+                    const languageCell = document.createElement('td');
+                    const workExperienceCell = document.createElement('td');
+                    const pricePerHourCell = document.createElement('td');
+                    const selectButtonCell = document.createElement('td');
+                    const selectButton = document.createElement('button');
+                    nameCell.textContent = guide.name;
+                    languageCell.textContent = guide.language;
+                    workExperienceCell.textContent = guide.workExperience;
+                    pricePerHourCell.textContent = guide.pricePerHour;
+                    selectButton.textContent = 'Выбрать';
+                    selectButton.classList.add('btn', 'btn-secondary', 'databutton');
+
+                    selectButton.addEventListener('click', function () {
+                        selectButton.classList.toggle('selectedG');
+                        const orderModal = new bootstrap.Modal(document.getElementById('orderModal'));
+                        orderModal.show();
+                    });
+                    selectButtonCell.appendChild(selectButton);
+
+                    row.appendChild(nameCell);
+                    row.appendChild(languageCell);
+                    row.appendChild(workExperienceCell);
+                    row.appendChild(pricePerHourCell);
+                    row.appendChild(selectButtonCell);
+
+                    guidesTableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка при получении данных о гидах:', error);
+            });
+    });
+
 });
