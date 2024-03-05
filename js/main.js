@@ -445,4 +445,19 @@ let selectedRoute = '';
             return 0; // Надбавка за утро не начинается до 9 часов
         }
     }
+    // Функция для определения надбавки за вечер
+    function calculateIsItEvening(time) {
+        const startTime = new Date(`01/01/2000 ${time}`); // Преобразуем время начала экскурсии в объект Date
+
+        // Предположим, что вечер - с 20 до 23 часов
+        const eveningStartTime = new Date(`01/01/2000 20:00`);
+        const eveningEndTime = new Date(`01/01/2000 23:00`);
+
+        // Если время начала экскурсии находится в интервале вечера, возвращаем надбавку, иначе возвращаем 0
+        if (startTime >= eveningStartTime && startTime <= eveningEndTime) {
+            return 1000; // Надбавка за вечер
+        } else {
+            return 0; // Надбавка за вечер не начинается после 20 часов
+        }
+    }
 });
