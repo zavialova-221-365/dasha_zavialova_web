@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentPage = 1;
     const itemsPerPage = 10; // Определение количества записей на странице
     let allRoutesData = []; // Данные о всех маршрутах
+
     function getRoutesData() {
         const apiUrl = `http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes?api_key=3990d76f-4908-438c-a2e9-90a0a642eb96`;
 
@@ -18,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Ошибка получения данных о маршрутах:', error);
             });
     }
+
+
     const searchInput = document.getElementById('searchInput');
     const applyButton = document.querySelector('.btn-primary');
 
@@ -31,128 +34,133 @@ document.addEventListener('DOMContentLoaded', function () {
             return route.name.toLowerCase().includes(searchTerm);
         });
 
-});
-// Очищаем и обновляем таблицу с отфильтрованными данными
-routesTableBody.innerHTML = '';
-filteredRoutes.forEach(route => {
-    const row = document.createElement('tr');
-    const nameCell = document.createElement('td');
-    const descriptionCell = document.createElement('td');
-    const objectsCell = document.createElement('td');
-    const buttonCell = document.createElement('td');
-    const selectButton = document.createElement('button');
+        // Очищаем и обновляем таблицу с отфильтрованными данными
+        routesTableBody.innerHTML = '';
+        filteredRoutes.forEach(route => {
+            const row = document.createElement('tr');
+            const nameCell = document.createElement('td');
+            const descriptionCell = document.createElement('td');
+            const objectsCell = document.createElement('td');
+            const buttonCell = document.createElement('td');
+            const selectButton = document.createElement('button');
 
-    nameCell.textContent = route.name;
-    descriptionCell.textContent = route.description;
-    objectsCell.textContent = route.mainObject;
+            nameCell.textContent = route.name;
+            descriptionCell.textContent = route.description;
+            objectsCell.textContent = route.mainObject;
 
-    selectButton.textContent = 'Выбрать';
-    selectButton.classList.add('btn', 'btn-secondary', 'selectRouteBtn');
-    selectButton.addEventListener('click', function () {
-        row.classList.toggle('selected');
-        const routeId = route.id;
-        const routeName = route.name;
-        loadGuidesForRoute(routeId, routeName);
-        updateSelectedRoute(routeName);
-        populateLanguagesSelect(routeId);
-    });
+            selectButton.textContent = 'Выбрать';
+            selectButton.classList.add('btn', 'btn-secondary', 'selectRouteBtn');
+            selectButton.addEventListener('click', function () {
+                row.classList.toggle('selected');
+                const routeId = route.id;
+                const routeName = route.name;
+                loadGuidesForRoute(routeId, routeName);
+                updateSelectedRoute(routeName);
+                populateLanguagesSelect(routeId);
+            });
 
-    buttonCell.appendChild(selectButton);
+            buttonCell.appendChild(selectButton);
 
-    row.appendChild(nameCell);
-    row.appendChild(descriptionCell);
-    row.appendChild(objectsCell);
-    row.appendChild(buttonCell);
+            row.appendChild(nameCell);
+            row.appendChild(descriptionCell);
+            row.appendChild(objectsCell);
+            row.appendChild(buttonCell);
 
-    routesTableBody.appendChild(row);
-});
-
-// Пересчитываем и создаем пагинацию для отфильтрованных данных
-function updateTable(page) {
-
-    routesTableBody.innerHTML = '';
-    const startIndex = (page - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const routesData = allRoutesData.slice(startIndex, endIndex);
-
-    routesData.forEach(route => {
-        const row = document.createElement('tr');
-        const nameCell = document.createElement('td');
-        const descriptionCell = document.createElement('td');
-        const objectsCell = document.createElement('td');
-        const buttonCell = document.createElement('td');
-        const selectButton = document.createElement('button');
-
-        nameCell.textContent = route.name;
-        descriptionCell.textContent = route.description;
-        objectsCell.textContent = route.mainObject;
-
-        selectButton.textContent = 'Выбрать';
-        selectButton.classList.add('btn', 'btn-secondary', 'selectRouteBtn');
-        selectButton.addEventListener('click', function () {
-            row.classList.toggle('selected');
-            const routeId = route.id;
-            const routeName = route.name;
-            loadGuidesForRoute(routeId, routeName);
-            populateLanguagesSelect(routeId);
-            updateSelectedRoute(routeName);
+            routesTableBody.appendChild(row);
         });
 
-        buttonCell.appendChild(selectButton);
-
-        row.appendChild(nameCell);
-        row.appendChild(descriptionCell);
-        row.appendChild(objectsCell);
-        row.appendChild(buttonCell);
-
-        routesTableBody.appendChild(row);
+        // Пересчитываем и создаем пагинацию для отфильтрованных данных
     });
 
-    createPagination();
+    function updateTable(page) {
 
+        routesTableBody.innerHTML = '';
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const routesData = allRoutesData.slice(startIndex, endIndex);
 
-    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        routesData.forEach(route => {
+            const row = document.createElement('tr');
+            const nameCell = document.createElement('td');
+            const descriptionCell = document.createElement('td');
+            const objectsCell = document.createElement('td');
+            const buttonCell = document.createElement('td');
+            const selectButton = document.createElement('button');
 
-    // Фильтрация данных по поисковому запросу
-    const filteredRoutesData = allRoutesData.filter(route =>
-        route.name.toLowerCase().includes(searchInput)
-    );
+            nameCell.textContent = route.name;
+            descriptionCell.textContent = route.description;
+            objectsCell.textContent = route.mainObject;
 
-    // Отображение только отфильтрованных данных на странице
+            selectButton.textContent = 'Выбрать';
+            selectButton.classList.add('btn', 'btn-secondary', 'selectRouteBtn');
+            selectButton.addEventListener('click', function () {
+                row.classList.toggle('selected');
+                const routeId = route.id;
+                const routeName = route.name;
+                loadGuidesForRoute(routeId, routeName);
+                populateLanguagesSelect(routeId);
+                updateSelectedRoute(routeName);
+            });
 
-    // Остальной код отображения данных остается без изменений
+            buttonCell.appendChild(selectButton);
 
-    createPagination();
-}
-function createPagination() {
+            row.appendChild(nameCell);
+            row.appendChild(descriptionCell);
+            row.appendChild(objectsCell);
+            row.appendChild(buttonCell);
 
-    pagination.innerHTML = '';
-    const totalPages = Math.ceil(allRoutesData.length / itemsPerPage);
-
-    for (let i = 1; i <= totalPages; i++) {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.classList.add('page-link');
-        a.href = '#';
-        a.textContent = i;
-
-        if (i === currentPage) {
-            li.classList.add('page-item', 'active');
-        } else {
-            li.classList.add('page-item');
-        }
-
-        a.addEventListener('click', function (event) {
-            event.preventDefault();
-            currentPage = i;
-            updateTable(currentPage);
+            routesTableBody.appendChild(row);
         });
 
-        li.appendChild(a);
-        pagination.appendChild(li);
+        createPagination();
+
+
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+        // Фильтрация данных по поисковому запросу
+        const filteredRoutesData = allRoutesData.filter(route =>
+            route.name.toLowerCase().includes(searchInput)
+        );
+
+        // Отображение только отфильтрованных данных на странице
+
+        // Остальной код отображения данных остается без изменений
+
+        createPagination();
     }
-}
-let selectedRoute = '';
+
+    function createPagination() {
+
+        pagination.innerHTML = '';
+        const totalPages = Math.ceil(allRoutesData.length / itemsPerPage);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.classList.add('page-link');
+            a.href = '#';
+            a.textContent = i;
+
+            if (i === currentPage) {
+                li.classList.add('page-item', 'active');
+            } else {
+                li.classList.add('page-item');
+            }
+
+            a.addEventListener('click', function (event) {
+                event.preventDefault();
+                currentPage = i;
+                updateTable(currentPage);
+            });
+
+            li.appendChild(a);
+            pagination.appendChild(li);
+        }
+    }
+
+
+
+    let selectedRoute = '';
     function loadGuidesForRoute(routeId, routeName) {
         const apiUrl = `http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes/${routeId}/guides?api_key=3990d76f-4908-438c-a2e9-90a0a642eb96`;
         selectedRoute = routeName;
@@ -215,8 +223,9 @@ let selectedRoute = '';
                 console.error('Ошибка получения данных о гидах:', error);
             });
     }
-     // Функция для обновления выбранного маршрута
-     function updateSelectedRoute(routeName) {
+
+    // Функция для обновления выбранного маршрута
+    function updateSelectedRoute(routeName) {
         selectedRoute = routeName;
         document.getElementById('selectedRoute').value = selectedRoute;
     }
@@ -306,6 +315,9 @@ let selectedRoute = '';
                 console.error('Ошибка при получении данных о гидах:', error);
             });
     });
+
+
+
     document.getElementById('calculateCost').addEventListener('click', function () {
         const hoursNumber = parseInt(document.getElementById('duration').value);
         console.log(hoursNumber)
@@ -407,6 +419,8 @@ let selectedRoute = '';
                 });
         });
     });
+
+
     function calculatePrice(guideServiceCost, hoursNumber, isThisDayOff, isItMorning, isItEvening, numberOfVisitors) {
         let totalPrice = guideServiceCost * hoursNumber * isThisDayOff + isItMorning + isItEvening;
 
@@ -420,6 +434,7 @@ let selectedRoute = '';
 
         return totalPrice;
     }
+
     function calculateIsThisDayOff(date) {
         const dayOfWeek = date.getDay(); // Получаем день недели (0 - воскресенье, 1 - понедельник, и т.д.)
 
@@ -430,6 +445,7 @@ let selectedRoute = '';
             return 1; // Множитель для буднего дня
         }
     }
+
     // Функция для определения надбавки за утро
     function calculateIsItMorning(time) {
         const startTime = new Date(`01/01/2000 ${time}`); // Преобразуем время начала экскурсии в объект Date
@@ -445,6 +461,7 @@ let selectedRoute = '';
             return 0; // Надбавка за утро не начинается до 9 часов
         }
     }
+
     // Функция для определения надбавки за вечер
     function calculateIsItEvening(time) {
         const startTime = new Date(`01/01/2000 ${time}`); // Преобразуем время начала экскурсии в объект Date
@@ -460,4 +477,5 @@ let selectedRoute = '';
             return 0; // Надбавка за вечер не начинается после 20 часов
         }
     }
+
 });
