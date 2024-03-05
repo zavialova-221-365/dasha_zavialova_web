@@ -215,4 +215,35 @@ let selectedRoute = '';
                 console.error('Ошибка получения данных о гидах:', error);
             });
     }
+     // Функция для обновления выбранного маршрута
+     function updateSelectedRoute(routeName) {
+        selectedRoute = routeName;
+        document.getElementById('selectedRoute').value = selectedRoute;
+    }
+
+    getRoutesData();
+    function populateLanguagesSelect(routeId) {
+        const apiUrl = `http://exam-2023-1-api.std-900.ist.mospolytech.ru/api/routes/${routeId}/guides?api_key=3990d76f-4908-438c-a2e9-90a0a642eb96`;
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const languages = new Set();
+
+                data.forEach(guide => {
+                    languages.add(guide.language);
+                });
+
+                const selectElement = document.getElementById('selectLanguages');
+                languages.forEach(language => {
+                    const option = document.createElement('option');
+                    option.value = language;
+                    option.textContent = language;
+                    selectElement.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка при получении данных о гидах:', error);
+            });
+    }
 });
